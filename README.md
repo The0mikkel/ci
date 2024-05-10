@@ -1,0 +1,2 @@
+# ci
+Centralized CI solution

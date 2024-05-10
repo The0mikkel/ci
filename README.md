@@ -108,7 +108,7 @@ node_modules
 ```yaml
 release:
     name: Release
-    uses: the0mikkel/ci/.github/workflows/semver-release.yml@v1.1.3
+    uses: the0mikkel/ci/.github/workflows/semver-release.yml@v1.1.4
 ```
 
 ### Docker build and push
@@ -146,7 +146,7 @@ Where it is located can be specified in the action.
     name: Docker
     needs: 
       - release
-    uses: the0mikkel/ci/.github/workflows/docker.yml@v1.1.3
+    uses: the0mikkel/ci/.github/workflows/docker.yml@v1.1.4
     with:
       semver: ${{ needs.release.outputs.version }}
 ```
@@ -178,5 +178,5 @@ on:
 jobs:
   pr-linter:
     name: Pull Request title check
-    uses: the0mikkel/ci/.github/workflows/pr-test-conventionalcommits.yml@v1.1.3
+    uses: the0mikkel/ci/.github/workflows/pr-test-conventionalcommits.yml@v1.1.4
 ```

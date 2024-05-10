@@ -32,26 +32,6 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Detect Gradle
-        id: gradle
-        run: echo "gradle=$(if [ -f "gradlew" ]; then echo "true"; else echo "false"; fi)" >> $GITHUB_OUTPUT
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        if: steps.gradle.outputs.gradle == 'true'
-        with:
-          java-version: "21"
-          distribution: "temurin"
-      - name: Setup Gradle
-        if: steps.gradle.outputs.gradle == 'true'
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-      - name: Prepare gradlew
-        if: steps.gradle.outputs.gradle == 'true'
-        run: chmod +x gradlew
-      - name: build and test
-        if: steps.gradle.outputs.gradle == 'true'
-        run: ./gradlew build
-        env:
-          GITHUB_TOKEN: ${{ secrets.BUILD_GH_TOKEN || secrets.GITHUB_TOKEN }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

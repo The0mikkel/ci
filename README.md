@@ -1,18 +1,18 @@
 # CI/CD GitHub Actions
 
-Handles continues integration / continues development
+Centralized CI repository for [The0mikkel](https://github.com/the0mikkel).  
+Allows for easy management of CI pipelines, in regards to updates and new features.
 
 ## Versioning
 
 The project uses [Semantic versioning](https://semver.org/), and the version is determined using [Semantic release](https://semantic-release.gitbook.io/semantic-release/).
 
-You can use the version of the release, to lock in the version of the action, that you want to use.
+You can use the version of the release, to lock in the version of the action that you want to use.  
+*You may also use the sha, to lock version more securely*
 
 Please only use `main` as the version, if you want to use the latest version, as it may be unstable or updated in a way that breaks your workflow.
 
 ## Available actions
-
-A wide range of actions are available, from Semver to linting.
 
 - [Semver release](#semver-release)
 - [Docker build and push](#docker-build-and-push)

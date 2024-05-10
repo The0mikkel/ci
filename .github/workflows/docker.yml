@@ -41,12 +41,10 @@ on:
       registry_username:
         description: 'Username to use for registry login. Defaults to Github actor.'
         required: false
-        default: ${{ github.actor }}
         type: string
       registry_token:
         description: 'Token to use for registry login. Defaults to GITHUB_TOKEN.'
         required: false
-        default: null
         type: string
 
 jobs:

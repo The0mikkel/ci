@@ -12,6 +12,12 @@ Please only use `main` as the version, if you want to use the latest version, as
 
 ## Available actions
 
+A wide range of actions are available, from Semver to linting.
+
+- [Semver release](#semver-release)
+- [Docker build and push](#docker-build-and-push)
+- [PR format test - Conventional commits](#pr-format-test---conventional-commits)
+
 ### Semver release
 
 This action will run Semantic Release to determine the next version of the package and create a new release.
@@ -143,4 +149,34 @@ Where it is located can be specified in the action.
     uses: the0mikkel/ci/.github/workflows/docker.yml@v1.0.0
     with:
       semver: ${{ needs.release.outputs.version }}
+```
+
+### PR format test - Conventional commits
+
+This action checks if the PR title fits the [Conventional commits](https://conventionalcommits.org) format.  
+Perfect for ensuring the PR fits the Conventional commits format for [Semantic release](https://semantic-release.gitbook.io/semantic-release/).
+
+#### Pre-requisites
+
+This action requires no specific setup in the repository.
+
+#### Inputs
+
+There are not inputs for this action.
+
+#### Example usage
+
+**Usage of the action:**
+
+```yaml
+name: PR format test - Conventional commits
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+
+jobs:
+  pr-linter:
+    name: Pull Request title check
+    uses: the0mikkel/ci/.github/workflows/pr-test-conventionalcommits.yml@v1.1.0
 ```

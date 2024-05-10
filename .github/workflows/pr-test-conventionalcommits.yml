@@ -1,0 +1,20 @@
+name: PR format test - Conventional commits
+
+on:
+  workflow_call:
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+  
+jobs:
+  linter:
+    name: Pull Request title check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # https://github.com/marketplace/actions/semantic-release-pr-title-check
+      - name: Semantic Release PR Title Check
+        uses: osl-incubator/semantic-release-pr-title-check@c67ca9c687967721b9b351970ff8c65fc5658dd8 # v1.4.3
+        with:
+          convention-name: conventionalcommits

@@ -1,0 +1,76 @@
+name: Semantic Versioning Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_call:
+    secrets:
+      RELEASE_GH_TOKEN:
+        description: "GitHub Token. Used to authenticate with GitHub at release step. This will overwrite the use of the default GitHub token."
+        required: false
+      BUILD_GH_TOKEN:
+        description: "GitHub Token. Used to authenticate with GitHub at build step. This will overwrite the use of the default GitHub token."
+    outputs:
+      version:
+        description: "The version of the release. Will be null if no release was made."
+        value: ${{ jobs.semantic-realease.outputs.version }}
+
+jobs:
+  semantic-realease:
+    name: Semantic release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Detect Gradle
+        id: gradle
+        run: echo "gradle=$(if [ -f "gradlew" ]; then echo "true"; else echo "false"; fi)" >> $GITHUB_OUTPUT
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        if: steps.gradle.outputs.gradle == 'true'
+        with:
+          java-version: "21"
+          distribution: "temurin"
+      - name: Setup Gradle
+        if: steps.gradle.outputs.gradle == 'true'
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Prepare gradlew
+        if: steps.gradle.outputs.gradle == 'true'
+        run: chmod +x gradlew
+      - name: build and test
+        if: steps.gradle.outputs.gradle == 'true'
+        run: ./gradlew build
+        env:
+          GITHUB_TOKEN: ${{ secrets.BUILD_GH_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "21"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm clean-install --force
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GH_TOKEN || secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.RELEASE_GH_TOKEN || secrets.GITHUB_TOKEN }}
+        run: npx semantic-release | tee semantic-release.log
+      - name: Archive release log
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-release.log
+          path: semantic-release.log
+      - name: Get version
+        id: version
+        run: echo version=$(cat semantic-release.log | grep -oP "next release version is \K.*") >> $GITHUB_OUTPUT

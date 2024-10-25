@@ -46,6 +46,11 @@ on:
         description: 'Token to use for registry login. Defaults to GITHUB_TOKEN.'
         required: false
         type: string
+      fetch_submodules:
+        description: 'Fetch submodules. Defaults to true.'
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   build:
@@ -57,6 +62,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Ensure submodules are fetched
+        if: ${{ inputs.fetch_submodules == true }}
+        run: git submodule update --init --recursive
 
         # Docker tagging based on semantic versioning or provided data
       - name: Docker meta based on SemVer

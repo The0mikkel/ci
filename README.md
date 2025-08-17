@@ -136,6 +136,7 @@ Where it is located can be specified in the action.
 - `image_name`: Name of image. Defaults to GitHub repository `${{ github.repository }}`
 - `registry_username`: Username to use for registry login. Defaults to Github actor.
 - `registry_token`: Token to use for registry login. Defaults to GITHUB_TOKEN.
+- `platforms`: Platforms to build for (comma separated, e.g., linux/amd64,linux/arm64). Defaults to `linux/amd64`.
 
 #### Example usage
 

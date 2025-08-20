@@ -61,6 +61,16 @@ on:
         required: false
         default: ubuntu-latest
         type: string
+      cacheFrom:
+        description: 'Cache type from'
+        required: false
+        type: string
+        default: type=gha
+      cacheTo:
+        description: 'Cache type to'
+        required: false
+        type: string
+        default: type=gha,mode=max
 
 jobs:
   build:
@@ -122,6 +132,6 @@ jobs:
           build-args: ${{ inputs.arguments }}
           tags: ${{ steps.meta-semver.outputs.tags || steps.meta-custom.outputs.tags }}
           labels: ${{ steps.meta-semver.outputs.labels || steps.meta-custom.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: ${{ inputs.cacheFrom }}
+          cache-to: ${{ inputs.cacheTo }}
           platforms: ${{ inputs.platforms }}

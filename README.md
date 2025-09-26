@@ -138,6 +138,7 @@ Where it is located can be specified in the action.
 - `registry_token`: Token to use for registry login. Defaults to GITHUB_TOKEN.
 - `platforms`: Platforms to build for (comma separated, e.g., linux/amd64,linux/arm64). Defaults to `linux/amd64`.
 - `runner`: Runner to use for the job. Defaults to `ubuntu-latest`.
+- `commit`: Commit SHA to use for git operations and tagging. Defaults to github.sha.
 
 #### Example usage
 

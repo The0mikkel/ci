@@ -1,6 +1,6 @@
 {
   "name": "ci",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "Centralized CI for The Mikkel",
   "main": "index.js",
   "scripts": {

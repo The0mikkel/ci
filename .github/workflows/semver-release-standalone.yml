@@ -1,0 +1,112 @@
+name: Semantic Versioning Release
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_call:
+    secrets:
+      RELEASE_GH_TOKEN:
+        description: "GitHub Token. Used to authenticate with GitHub at release step. This will overwrite the use of the default GitHub token."
+        required: false
+      BUILD_GH_TOKEN:
+        description: "GitHub Token. Used to authenticate with GitHub at build step. This will overwrite the use of the default GitHub token."
+    outputs:
+      version:
+        description: "The version of the release. Will be null if no release was made."
+        value: ${{ jobs.semantic-realease.outputs.version }}
+
+jobs:
+  semantic-realease:
+    name: Semantic release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+      - name: Install dependencies
+        run: npm install @semantic-release/exec @semantic-release/commit-analyzer @semantic-release/git @semantic-release/github @semantic-release/release-notes-generator conventional-changelog-conventionalcommits -D
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+      - name: Detect if configuration file is available for semantic-release
+        id: check-config
+        run: |
+          if [ -f .releaserc.json ] || [ -f .releaserc ] || [ -f release.config.js ]; then
+            echo "config_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "config_exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Set default configuration file for semantic-release
+        if: steps.check-config.outputs.config_exists == 'false'
+        run: |
+            cat << 'EOF' > .releaserc.json
+            {
+                "branches": [
+                    "main",
+                    {
+                        "name": "develop",
+                        "prerelease": "r"
+                    }
+                ],
+                "plugins": [
+                    [
+                        "@semantic-release/commit-analyzer",
+                        {
+                            "preset": "conventionalcommits"
+                        }
+                    ],
+                    [
+                        "@semantic-release/release-notes-generator",
+                        {
+                            "preset": "conventionalcommits"
+                        }
+                    ],
+                    [
+                        "@semantic-release/github",
+                        {
+                            "successComment": false
+                        }
+                    ],
+                    [
+                        "@semantic-release/exec",
+                        {
+                            "prepareCmd": "echo ${nextRelease.version} > version.txt",
+                            "publishCmd": "echo 'Published version ${nextRelease.version}'"
+                        }
+                    ],
+                    [
+                        "@semantic-release/git",
+                        {
+                            "assets": ["version.txt"],
+                            "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+                        }
+                    ]
+                ]
+            }
+            EOF
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GH_TOKEN || secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.RELEASE_GH_TOKEN || secrets.GITHUB_TOKEN }}
+        run: npx semantic-release | tee semantic-release.log
+      - name: Archive release log
+        uses: actions/upload-artifact@v5
+        with:
+          name: semantic-release.log
+          path: semantic-release.log
+      - name: Get version
+        id: version
+        run: echo version=$(cat semantic-release.log | grep -oP "next release version is \K.*") >> $GITHUB_OUTPUT

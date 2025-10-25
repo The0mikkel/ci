@@ -24,7 +24,7 @@ This action will run Semantic Release to determine the next version of the packa
 
 #### Pre-requisites
 
-Semver release pipeline requires a node project to be initiated in the repository.
+Semver release pipeline can be used with or without (standalone) a node project in the root of the project.
 
 <details>
 <summary>Node project setup</summary>
@@ -92,6 +92,61 @@ node_modules
 
 </details>
 
+<details>
+<summary>Standalone</summary>
+
+The following configuration needs to be added to a new file `.releaserc.json`:
+
+```json
+{
+    "branches": [
+        "main",
+        {
+            "name": "develop",
+            "prerelease": "r"
+        }
+    ],
+    "plugins": [
+        [
+            "@semantic-release/commit-analyzer",
+            {
+                "preset": "conventionalcommits"
+            }
+        ],
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                "preset": "conventionalcommits"
+            }
+        ],
+        [
+            "@semantic-release/github",
+            {
+                "successComment": false
+            }
+        ],
+        [
+            "@semantic-release/exec",
+            {
+                "prepareCmd": "echo ${nextRelease.version} > version.txt",
+                "publishCmd": "echo 'Published version ${nextRelease.version}'"
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": ["version.txt"],
+                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        ]
+    ]
+}
+```
+
+It may be configured to your liking, according to [the configuration file format](https://semantic-release.gitbook.io/semantic-release/beta/usage/configuration).  
+If not included in the repository, this file will be used.
+
+</details>
 
 #### Inputs
 
@@ -108,7 +163,15 @@ node_modules
 ```yaml
 release:
     name: Release
-    uses: the0mikkel/ci/.github/workflows/semver-release.yml@v1.1.4
+    uses: the0mikkel/ci/.github/workflows/semver-release.yml@v1.4.0
+```
+
+*Standalone version:*
+
+```yaml
+release:
+    name: Release
+    uses: the0mikkel/ci/.github/workflows/semver-release-standalone.yml@v1.4.0
 ```
 
 ### Docker build and push

@@ -5,6 +5,11 @@ on:
     branches:
       - main
   workflow_call:
+    inputs:
+      ENVIRONMENT:
+        description: "The environment to deploy to."
+        required: false
+        type: string
     secrets:
       RELEASE_GH_TOKEN:
         description: "GitHub Token. Used to authenticate with GitHub at release step. This will overwrite the use of the default GitHub token."
@@ -20,6 +25,7 @@ jobs:
   semantic-realease:
     name: Semantic release
     runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT || '' }}
     permissions:
       contents: write
       packages: write

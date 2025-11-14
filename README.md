@@ -151,6 +151,7 @@ If not included in the repository, this file will be used.
 #### Inputs
 
 - `GH_TOKEN`: The GitHub token to use for authentication. Defaults to the default GitHub token.
+- `ENVIRONMENT`: The environment to deploy to. Defaults to an empty string.
 
 #### Outputs
 

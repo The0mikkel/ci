@@ -9,6 +9,8 @@ jobs:
   linter:
     name: Pull Request title check
     runs-on: ubuntu-latest
+    permissions: 
+      pull-requests: read
 
     steps:
       - uses: actions/checkout@v6

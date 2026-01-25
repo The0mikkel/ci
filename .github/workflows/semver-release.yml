@@ -34,15 +34,14 @@ jobs:
       version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "22"
-          cache: "npm"
+          node-version: "lts/*"
       - name: Install dependencies
         run: npm clean-install --force
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
@@ -53,7 +52,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.RELEASE_GH_TOKEN || secrets.GITHUB_TOKEN }}
         run: npx semantic-release | tee semantic-release.log
       - name: Archive release log
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: semantic-release.log
           path: semantic-release.log

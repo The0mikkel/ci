@@ -1,10 +1,6 @@
 name: Semantic Versioning Release
 
 on:
-  push:
-    branches:
-      - main
-      - develop
   workflow_call:
     inputs:
       ENVIRONMENT:

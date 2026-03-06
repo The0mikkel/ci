@@ -99,7 +99,7 @@ jobs:
       - name: Docker meta based on SemVer
         id: meta-semver
         if: ${{ inputs.semver != '' }}
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: |
@@ -114,7 +114,7 @@ jobs:
       - name: Docker meta based on provided data
         id: meta-custom
         if: ${{ inputs.semver == '' }}
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}
           tags: ${{ inputs.tags }}
